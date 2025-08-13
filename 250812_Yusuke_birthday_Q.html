@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>謎解きゲーム</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body {
+    margin:0; padding:0; height:100%;
+    font-family:'Yu Gothic',sans-serif; color:#fff;
+    background: url('Q_bg.png') center/cover no-repeat fixed;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .container {
+    text-align:center;
+    background: rgba(0,0,0,0.6);
+    padding:20px;
+    border-radius:12px;
+    width:min(92vw,900px);
+  }
+  #puzzleImg { max-width:90vw; max-height:50vh; border-radius:8px; display:block; margin:0 auto; }
+  #story { display:none; text-align:left; white-space:pre-line; line-height:1.8; max-width:860px; margin:0 auto; }
+  input {
+    font-size:18px; padding:8px; border-radius:6px; border:none; margin-top:10px; width:min(86vw,520px);
+  }
+  button {
+    font-size:18px; padding:8px 16px; margin-top:10px;
+    border:none; border-radius:6px; cursor:pointer; font-weight:bold;
+  }
+  .correct { color:#0f0; font-size:20px; margin-top:10px; }
+  .wrong { color:#f66; font-size:20px; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <img id="puzzleImg" src="" alt="謎解き画像">
+  <div id="story"></div>
+
+  <div>
+    <input type="text" id="answerBox" placeholder="答えを入力">
+  </div>
+  <div>
+    <button id="submitBtn">送信</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+  </div>
+  <div id="resultMsg"></div>
+</div>
+
+<script>
+  const puzzles = [
+    { img: 'q1.png', answer: 'かやば' },
+    { img: 'q2.png', answer: 'はなび' },
+    { img: 'q3.png', answer: 'りょう' },
+    { img: 'q4.png', answer: 'ふぃふぁ' },
+    { img: 'q5.png', answer: 'ひらのりな' },
+    { img: 'q6.png', answer: 'まりおかーと' },
+    { img: 'q7.png', answer: 'めきしかんこーら' },
+    { img: 'q8.png', answer: 'せいじょうき' },
+    { img: 'q9.png', answer: 'まーだーみすてりー' },
+    { img: 'q10.png', answer: 'あど' },
+    { img: 'q11.png', answer: 'だいえっと' },
+    { img: 'q12.png', answer: 'わしんとん' },
+    { img: 'q13.png', answer: 'きんとれ' },
+    { img: 'q14.png', answer: 'しあとる' },
+    { img: 'q15.png', answer: 'たこま' },
+    { img: 'q16.png', answer: 'だっしゅつ' },
+    { img: 'q17.png', answer: 'まりなーず' },
+  ];
+
+  // 最終ナレーションの設定
+  const finalNarration =
+`クリア、おめでとう！！\n\n最後の暗号を解いた瞬間、すべての“断片”がひとつに重なった。\nそれは――真の地図の姿だった。\n\n記憶を奪われる前、村を守るために残した最後の希望。\n\n押し寄せる記憶――あなたはこの村の長であり、呪文を封じる唯一の存在だった。\n\n黒い霧の中、ヴェルミリオンが姿を現す。\n深紅の瞳が光り、冷たい笑みを浮かべる。\n\nあなたは深く息を吸い、この数字を唱える(半角で)。\n`;
+
+  const finalAnswer = '3776'; // ← 最終解答をここで設定（例）
+
+  let current = 0;
+  const imgEl = document.getElementById('puzzleImg');
+  const storyEl = document.getElementById('story');
+  const answerBox = document.getElementById('answerBox');
+  const submitBtn = document.getElementById('submitBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const resultMsg = document.getElementById('resultMsg');
+
+  function loadPuzzle(index) {
+    // 通常問題の表示（画像あり／ナレーション非表示）
+    imgEl.style.display = 'block';
+    storyEl.style.display = 'none';
+    imgEl.src = puzzles[index].img;
+
+    answerBox.value = '';
+    resultMsg.textContent = '';
+    resultMsg.className = '';
+    submitBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'none';
+    answerBox.focus();
+  }
+
+  function loadFinal() {
+    // 最終ナレーション表示（画像非表示／ナレーション表示）
+    imgEl.style.display = 'none';
+    storyEl.style.display = 'block';
+    storyEl.textContent = finalNarration;
+
+    answerBox.value = '';
+    resultMsg.textContent = '';
+    resultMsg.className = '';
+    submitBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'none';
+    answerBox.focus();
+  }
+
+  function normalize(s){
+    // 全角数字→半角、前後＆連続スペース整理、ひらがなカタカナ混在対策は必要に応じ追加
+    const z2h = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0)-0xFEE0));
+    return z2h.trim().replace(/\s+/g,' ');
+  }
+
+  submitBtn.onclick = () => {
+    const user = normalize(answerBox.value).toLowerCase();
+
+    // 通常問題中
+    if (current < puzzles.length) {
+      const correct = normalize(puzzles[current].answer).toLowerCase();
+      if (user && user === correct) {
+        resultMsg.textContent = '正解';
+        resultMsg.className = 'correct';
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'inline-block';
+      } else {
+        resultMsg.textContent = '不正解';
+        resultMsg.className = 'wrong';
+      }
+      return;
+    }
+
+    // 最終ナレーション画面の判定
+    const final = normalize(finalAnswer).toLowerCase();
+    if (user && user === final) {
+      resultMsg.textContent = '正解！';
+      resultMsg.className = 'correct';
+      submitBtn.style.display = 'none';
+      nextBtn.style.display = 'inline-block';
+    } else {
+      resultMsg.textContent = '不正解';
+      resultMsg.className = 'wrong';
+    }
+  };
+
+  nextBtn.onclick = () => {
+    // 通常問題の次へ
+    if (current < puzzles.length) {
+      current++;
+      if (current < puzzles.length) {
+        loadPuzzle(current);
+      } else {
+        // すべて解いたら「ハピバ」ナレーション画面へ
+        loadFinal();
+      }
+      return;
+    }
+
+    // 最終ナレーション正解後の“本当の”エンディング
+    document.querySelector('.container').innerHTML =
+      '<h1 style="white-space:pre-line; line-height:1.8; text-align:center;">数字が光の粒となって空へ昇り、赤い光が砕け散る。\nヴェルミリオンの影は断末魔の叫びとともに闇に溶けて消えた。\n\nやがて、村には再び人々の笑い声が戻り、祭りの灯りが夜空を彩る。\nルシアは足元に寄り添い、静かに尻尾を振った。\n\n――すべては、あの日の自分が託した未来だった。\n</h1>';
+  };
+
+  // 最初の問題読み込み
+  loadPuzzle(current);
+</script>
+</body>
+</html>
