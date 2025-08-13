@@ -44,7 +44,31 @@ button { font-size:22px; background:#ffe688; color:#502800; font-weight:bold; bo
   </div>
 </div>
 <script>
-const STORY_TEXT = '闇が、すべてを包み込んでいた。\n視界は閉ざされ、足元すらわからない。\n胸の奥がざわつく――何か、大切なものを失くしてしまった気がする。\nそれは、決して置き去りにしてはいけない記憶。\n取り戻さなければ……あの思い出を。';
+const STORY_TEXT = 'プロローグ
+目を覚ますと、あなたは薄暗い診療所のベッドに横たわっていた。
+視界の先には、優しい眼差しの Dr. Sung。
+
+「…この村は、ある出来事を境に静まり返ってしまいました。」
+その声は静かで、しかし深い悲しみを帯びていた。
+
+ここは、かつて祭りと笑い声に包まれていた小さな村。
+だが今は、人影もなく、風が軋む音だけが響いている。
+
+診療所の扉を開けると、一匹のパグがこちらを見上げていた。
+首には古びた鍵。その名は ルシア。
+その瞳には、あなたに何かを訴える強い光が宿っていた。
+
+ルシアが歩き出す。足元から、くしゃくしゃになった紙切れが舞い落ちた。
+そこには震える筆跡でこう記されている。
+
+「宝を見つけた者は、この村の真実を知る」
+
+噂によれば、“ヴェルミリオン”と呼ばれる者が現れ、村を滅ぼす呪文を放とうとした。
+その呪文を封じる術を知る者はただ一人――だがその人物は忽然と姿を消し、村は不思議な力で閉ざされてしまったという。
+
+あなたはルシアに導かれ、村に散らばる暗号を解くことを決意する。
+ひとつ謎を解くたびに、地図の封印が解け、何かの“断片”が集まっていく。
+しかし、すべてを集められなければ――村は永遠に静寂に閉ざされるだろう。';
 const SLIDE_IMAGES = ['slide1.png', 'slide2.png'];
 const scenes = { intro:document.getElementById('intro'), story:document.getElementById('story'), slide:document.getElementById('slideScene') };
 function showScene(key){ Object.values(scenes).forEach(s=>s.classList.remove('active')); scenes[key].classList.add('active'); if(key==='story') startTypewriterStory(); }
