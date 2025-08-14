@@ -49,7 +49,7 @@ const SLIDE_IMAGES = ['LuciaQR.png', 'NazoQR.png'];
 const scenes = { intro:document.getElementById('intro'), story:document.getElementById('story'), slide:document.getElementById('slideScene') };
 function showScene(key){ Object.values(scenes).forEach(s=>s.classList.remove('active')); scenes[key].classList.add('active'); if(key==='story') startTypewriterStory(); }
 function startTypewriterStory(){ const textEl=document.getElementById('storyText'); const btn=document.getElementById('toSlideBtn'); textEl.innerHTML=''; btn.style.display='none'; const nodes=[]; for(const ch of STORY_TEXT){ if(ch==='\n'){ nodes.push(document.createElement('br')); } else { const sp=document.createElement('span'); sp.className='char'; sp.textContent=ch; nodes.push(sp);} } nodes.forEach(n=>textEl.appendChild(n)); let i=0; const timer=setInterval(()=>{ while(i<nodes.length && nodes[i].tagName==='BR'){i++;} if(i<nodes.length){ nodes[i].classList.add('show'); i++; } else { clearInterval(timer); btn.style.display='inline-block'; } },35); }
-function runSlides(){ const img=document.getElementById('slideImg'); let index=0; function nextSlide(){ if(index>=SLIDE_IMAGES.length) return; img.classList.remove('slide'); void img.offsetWidth; img.onload=()=>{ img.classList.add('slide'); setTimeout(()=>{ index++; nextSlide(); },1000); }; img.src=SLIDE_IMAGES[index]; }
+function runSlides(){ const img=document.getElementById('slideImg'); let index=0; function nextSlide(){ if(index>=SLIDE_IMAGES.length) return; void img.offsetWidth; img.onload=()=>{ img.classList.add('slide'); setTimeout(()=>{ index++; nextSlide(); },1000); }; img.src=SLIDE_IMAGES[index]; }
   nextSlide();
 }
 const bgm=document.getElementById('bgm');
