@@ -43,15 +43,18 @@ button { font-size:22px; background:#ffe688; color:#502800; font-weight:bold; bo
     <button id="skipSoundBtn" style="margin-top:10px;background:#555;color:#fff;">BGMなしで進む</button>
   </div>
 </div>
+  
 <script>
-const STORY_TEXT = '目を覚ますと、あなたは薄暗い診療所のベッドに横たわっていた。\n視界の先には、優しい眼差しの Dr. Sung。\n\n「…この村は、ある出来事を境に静まり返ってしまいました。」\nその声は静かで、しかし深い悲しみを帯びていた。\n\nここは、かつて祭りと笑い声に包まれていた小さな村。\nだが今は、人影もなく、風が軋む音だけが響いている。\n\n診療所の扉を開けると、一匹のパグがこちらを見上げていた。\n首には古びた鍵。その名は ルシア。\nその瞳には、あなたに何かを訴える強い光が宿っていた。\n\nルシアが歩き出す。足元から、くしゃくしゃになった紙切れが舞い落ちた。\nそこには震える筆跡でこう記されている。\n\n「宝を見つけた者は、この村の真実を知る」\n\n噂によれば、“ニャニャルラロトホテプ”と呼ばれる者が現れ、村を滅ぼす呪文を放とうとした。\nその呪文を封じる術を知る者はただ一人――だがその人物は忽然と姿を消し、村は不思議な力で閉ざされてしまったという。\n\nあなたはルシアに導かれ、村に散らばる暗号を解くことを決意する。\nひとつ謎を解くたびに、地図の封印が解け、何かの“断片”が集まっていく。\nしかし、すべてを集められなければ――村は永遠に静寂に閉ざされるだろう。\n';
+const STORY_TEXT = '目を覚ますと、あなたは薄暗い診療所のベッドに横たわっていた。\n視界の先には、優しい眼差しの Dr. Sung。\n\n「…この村は、ある出来事を境に静まり返ってしまいました。」\nその声は静かで、しかし深い悲しみを帯びていた。\n\nここは、かつて祭りと笑い声に包まれていた小さな村。\nだが今は、人影もなく、風が軋む音だけが響いている。\n\n診療所の扉を開けると、一匹のパグがこちらを見上げていた。\n首には古びた鍵。その名は ルシア。\nその瞳には、あなたに何かを訴える強い光が宿っていた。\n\nルシアが歩き出す。足元から、くしゃくしゃになった紙切れが舞い落ちた。\nそこには震える筆跡でこう記されている。\n\n「宝を見つけた者は、この村の真実を知る」\n\n噂によれば、“ヴェルミリオン”と呼ばれる者が現れ、村を滅ぼす呪文を放とうとした。\nその呪文を封じる術を知る者はただ一人――だがその人物は忽然と姿を消し、村は不思議な力で閉ざされてしまったという。\n\nあなたはルシアに導かれ、村に散らばる暗号を解くことを決意する。\nひとつ謎を解くたびに、地図の封印が解け、何かの“断片”が集まっていく。\nしかし、すべてを集められなければ――村は永遠に静寂に閉ざされるだろう。\n';
 const SLIDE_IMAGES = ['LuciaQR.png', 'NazoQR.png'];
 const scenes = { intro:document.getElementById('intro'), story:document.getElementById('story'), slide:document.getElementById('slideScene') };
 function showScene(key){ Object.values(scenes).forEach(s=>s.classList.remove('active')); scenes[key].classList.add('active'); if(key==='story') startTypewriterStory(); }
 function startTypewriterStory(){ const textEl=document.getElementById('storyText'); const btn=document.getElementById('toSlideBtn'); textEl.innerHTML=''; btn.style.display='none'; const nodes=[]; for(const ch of STORY_TEXT){ if(ch==='\n'){ nodes.push(document.createElement('br')); } else { const sp=document.createElement('span'); sp.className='char'; sp.textContent=ch; nodes.push(sp);} } nodes.forEach(n=>textEl.appendChild(n)); let i=0; const timer=setInterval(()=>{ while(i<nodes.length && nodes[i].tagName==='BR'){i++;} if(i<nodes.length){ nodes[i].classList.add('show'); i++; } else { clearInterval(timer); btn.style.display='inline-block'; } },35); }
-function runSlides(){ const img=document.getElementById('slideImg'); let index=0; function nextSlide(){ if(index>=SLIDE_IMAGES.length) return; void img.offsetWidth; img.onload=()=>{ img.classList.add('slide'); img.src=SLIDE_IMAGES[index]; }
+function runSlides(){ const img=document.getElementById('slideImg'); let index=0; function nextSlide(){ if(index>=SLIDE_IMAGES.length) return; img.classList.remove('slide'); void img.offsetWidth; img.onload=()=>{ img.classList.add('slide'); setTimeout(()=>{ index++; nextSlide(); },35000); }; img.src=SLIDE_IMAGES[index]; }
   nextSlide();
 }
+
+                     
 const bgm=document.getElementById('bgm');
 let soundConfigured = false;
 document.getElementById('playPauseBtn').onclick=()=>{ if(bgm.paused) bgm.play(); else bgm.pause();};
